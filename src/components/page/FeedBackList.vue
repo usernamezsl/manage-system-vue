@@ -81,7 +81,7 @@
         created: function () {
             var tableData = [];
             let _this = this;
-            this.$axios.get('http://localhost:8090/getProblemsVue')
+            this.$axios.get('http://localhost:8080/getProblemsVue')
                 .then(function (response) {
                     var jsonObject = response.data;
                     var  resultData = jsonObject.data;

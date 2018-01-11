@@ -67,7 +67,7 @@
             var data = [];
             let _this = this;
 //            Vue.prototype.$axios = axios;
-            this.$axios.get('http://localhost:8090/getOrderVue')
+            this.$axios.get('http://localhost:8080/getOrderVue')
                 .then(function (response) {
                     if (response.data != null && response.data != ''){
                         for (let i = 0; i < response.data.length; i++) {

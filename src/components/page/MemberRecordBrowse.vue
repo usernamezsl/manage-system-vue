@@ -62,7 +62,7 @@
         created: function () {
             var data = [];
             let _this = this;
-            this.$axios.get('http://localhost:8090/getUserRecordVue')
+            this.$axios.get('http://localhost:8080/getUserRecordVue')
                 .then(function (response) {
                     debugger;
                     var jsonObject = response.data;

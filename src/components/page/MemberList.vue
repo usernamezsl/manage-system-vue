@@ -95,7 +95,7 @@
             var data = [];
             let _this = this;
 //            Vue.prototype.$axios = axios;
-            this.$axios.get('http://localhost:8090/getAllCommonUserVue')
+            this.$axios.get('http://localhost:8080/getAllCommonUserVue')
                 .then(function (response) {
                     var jsonObject = response.data;
                     var  resultData = jsonObject.data;

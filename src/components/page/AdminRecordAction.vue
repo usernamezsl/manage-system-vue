@@ -63,7 +63,7 @@
             var data = [];
             let _this = this;
 //            Vue.prototype.$axios = axios;
-            this.$axios.get('http://localhost:8090/getAdminRecordVue')
+            this.$axios.get('http://localhost:8080/getAdminRecordVue')
                 .then(function (response) {
                     var jsonObject = response.data;
                     var  resultData = jsonObject.data;

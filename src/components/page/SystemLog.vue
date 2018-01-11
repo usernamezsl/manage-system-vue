@@ -8,25 +8,25 @@
         </div>
         <div class="handle-box">
             <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
-            <el-select v-model="select_cate" placeholder="筛选省份" class="handle-select mr10">
-                <el-option key="1" label="广东省" value="广东省"></el-option>
-                <el-option key="2" label="湖南省" value="湖南省"></el-option>
-            </el-select>
             <el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10"></el-input>
             <el-button type="primary" icon="search" @click="search">搜索</el-button>
         </div>
-        <el-table :data="data" border style="width: 100%" ref="multipleTable" @selection-change="handleSelectionChange">
+        <el-table :data="tableDataEnd" border style="width: 100%" ref="multipleTable" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="date" label="日期" sortable width="150">
+            <el-table-column prop="id" label="ID" sortable width="80">
             </el-table-column>
-            <el-table-column prop="name" label="姓名" width="120">
+            <el-table-column prop="type" label="类型" width="80">
             </el-table-column>
-            <el-table-column prop="address" label="地址" :formatter="formatter">
+            <el-table-column prop="content" label="内容" width="200">
+            </el-table-column>
+            <el-table-column prop="nickName" label="用户名" width="150">
+            </el-table-column>
+            <el-table-column prop="ip" label="客户端ip" width="150">
+            </el-table-column>
+            <el-table-column prop="timeString" label="时间" width="250">
             </el-table-column>
             <el-table-column label="操作" width="180">
                 <template scope="scope">
-                    <el-button size="small"
-                               @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button size="small" type="danger"
                                @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                 </template>
@@ -34,72 +34,151 @@
         </el-table>
         <div class="pagination">
             <el-pagination
-                @current-change ="handleCurrentChange"
-                layout="prev, pager, next"
-                :total="1000">
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-sizes="[10, 20, 30, 40]"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="totalItems">
             </el-pagination>
         </div>
     </div>
 </template>
 
 <script>
+
+    import axios from 'axios';
     export default {
         data() {
             return {
-                url: './static/vuetable.json',
-                tableData: [],
-                cur_page: 1,
-                multipleSelection: [],
-                select_cate: '',
-                select_word: '',
-                del_list: [],
-                is_search: false
+                tableDataBegin: [
+                ],
+                tableDataName: "",
+                tableDataEnd: [],
+                currentPage: 1,
+                pageSize: 10,
+                totalItems: 0,
+                filterTableDataEnd:[],
+                flag:false
             }
         },
-        created(){
-            this.getData();
-        },
-        computed: {
-            data(){
-                const self = this;
-                return self.tableData.filter(function(d){
-                    let is_del = false;
-                    for (let i = 0; i < self.del_list.length; i++) {
-                        if(d.name === self.del_list[i].name){
-                            is_del = true;
-                            break;
+        created: function () {
+            var data = [];
+            let _this = this;
+            this.$axios.get('http://localhost:8080/getDataRecordVue')
+                .then(function (response) {
+                    var jsonObject = response.data;
+                    var  resultData = jsonObject.data;
+                    for (var i= 0;i<resultData.length;i++){
+                        var obj = {};
+                        if (resultData[i].hasOwnProperty("id")){
+                            obj.id = resultData[i].id;
+                        }else {
+                            obj.id = 999;
                         }
-                    }
-                    if(!is_del){
-                        if(d.address.indexOf(self.select_cate) > -1 &&
-                            (d.name.indexOf(self.select_word) > -1 ||
-                                d.address.indexOf(self.select_word) > -1)
-                        ){
-                            return d;
+                        if (resultData[i].hasOwnProperty("timeString")){
+                            obj.timeString = resultData[i].timeString;
+                        }else {
+                            obj.timeString = '2017-11-30 10:30:57';
                         }
+                        if (resultData[i].hasOwnProperty("type")){
+                            obj.type = resultData[i].type;
+                        }else {
+                            obj.type = 'A1';
+                        }
+                        if (resultData[i].hasOwnProperty("content")){
+                            obj.content = resultData[i].content;
+                        }else {
+                            obj.content = '15080579822用户登录';
+                        }
+                        if (resultData[i].hasOwnProperty("user")){
+                            if (resultData[i].user.hasOwnProperty("nickName")){
+                                obj.nickName = resultData[i].user.nickName;
+                            }
+                        }else {
+                            obj.nickName = '15080579822';
+                        }
+                        if (resultData[i].hasOwnProperty("user")){
+                            if (resultData[i].user.hasOwnProperty("lastip")){
+                                obj.ip = resultData[i].user.lastip;
+                            }
+                        }else {
+                            obj.ip = '127.0.0.1';
+                        }
+                        data.push(obj);
                     }
-                })
-            }
+                    _this.tableDataBegin = data;
+                    _this.totalItems = _this.tableDataBegin.length;
+                    if (_this.totalItems > _this.pageSize) {
+                        for (let index = 0; index < _this.pageSize; index++) {
+                            _this.tableDataEnd.push(_this.tableDataBegin[index]);
+                        }
+                    } else {
+                        _this.tableDataEnd = _this.tableDataBegin;
+                    }
+                }).catch(function (error) {
+                console.log(error);
+            });
+
         },
         methods: {
-            handleCurrentChange(val){
-                this.cur_page = val;
-                this.getData();
+            //前端搜索功能需要区分是否检索,因为对应的字段的索引不同
+            //用两个变量接收currentChangePage函数的参数
+            doFilter() {
+                if (this.tableDataName == "") {
+                    this.$message.warning("查询条件不能为空！");
+                    return;
+                }
+                this.tableDataEnd = [];
+                //每次手动将数据置空,因为会出现多次点击搜索情况
+                this.filterTableDataEnd=[];
+                this.tableDataBegin.forEach((value, index) => {
+                    if(value.name){
+                        if(value.name.indexOf(this.tableDataName)>=0){
+                            this.filterTableDataEnd.push(value)
+                        }
+                    }
+                });
+                //页面数据改变重新统计数据数量和当前页
+                this.currentPage=1;
+                this.totalItems=this.filterTableDataEnd.length;
+                //渲染表格,根据值
+                this.currentChangePage(this.filterTableDataEnd);
+                //页面初始化数据需要判断是否检索过
+                this.flag=true
             },
-            getData(){
-                let self = this;
-                if(process.env.NODE_ENV === 'development'){
-                    self.url = '/ms/table/list';
-                };
-                self.$axios.post(self.url, {page:self.cur_page}).then((res) => {
-                    self.tableData = res.data.list;
-                })
+            openData() {},
+            handleSizeChange(val) {
+                debugger;
+                console.log(`每页 ${val} 条`);
+                this.pageSize = val;
+                this.handleCurrentChange(this.currentPage);
+            },
+            handleCurrentChange(val) {
+                debugger;
+                console.log(`当前页: ${val}`);
+                this.currentPage = val;
+                //需要判断是否检索
+                if(!this.flag){
+                    this.currentChangePage(this.tableDataEnd)
+                }else{
+                    this.currentChangePage(this.filterTableDataEnd)
+                }
+            }, //组件自带监控当前页码
+            currentChangePage(list) {
+                let from = (this.currentPage - 1) * this.pageSize;
+                let to = this.currentPage * this.pageSize;
+                this.tableDataEnd = [];
+                for (; from < to; from++) {
+                    if (list[from]) {
+                        this.tableDataEnd.push(list[from]);
+                    }
+                }
             },
             search(){
+                //搜索处理逻辑
                 this.is_search = true;
-            },
-            formatter(row, column) {
-                return row.address;
             },
             filterTag(value, row) {
                 return row.tag === value;
