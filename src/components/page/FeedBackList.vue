@@ -11,9 +11,9 @@
         </div>
         <el-table :data="tableDataEnd" border style="width: 100%" ref="multipleTable" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="ID" sortable width="120">
+            <el-table-column prop="id" label="ID" sortable width="80">
             </el-table-column>
-            <el-table-column prop="nickName" label="用户名" width="250">
+            <el-table-column prop="nickName" label="用户名" width="200">
             </el-table-column>
             <el-table-column prop="content" label="反馈内容" width="260">
             </el-table-column>
@@ -52,6 +52,17 @@
                 <el-button type="primary" @click="dialogFormEditVisible = false">提 交</el-button>
             </div>
         </el-dialog>
+        <el-dialog
+            title="提示"
+            :visible.sync="dialogVisible"
+            width="20%"
+            :before-close="handleClose">
+            <span>这是一段信息</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+         </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -69,6 +80,7 @@
                 pageSize: 10,
                 totalItems: 0,
                 filterTableDataEnd:[],
+                dialogVisible:false,
                 flag:false,
                 formLabelWidth: '120px',
                 dialogFormEditVisible : false,
@@ -180,22 +192,24 @@
                 return row.tag === value;
             },
             handleEdit(index, row) {
-                this.$message('编辑第'+(index+1)+'行');
+//                this.$message('编辑第'+(index+1)+'行');
                 this.dialogFormEditVisible = true;
             },
             handleDelete(index, row) {
-                this.$message.error('删除第'+(index+1)+'行');
+//                this.$message.error('删除第'+(index+1)+'行');
+                this.dialogVisible = true;
             },
             delAll(){
-                const self = this,
-                    length = self.multipleSelection.length;
-                let str = '';
-                self.del_list = self.del_list.concat(self.multipleSelection);
-                for (let i = 0; i < length; i++) {
-                    str += self.multipleSelection[i].name + ' ';
-                }
-                self.$message.error('删除了'+str);
-                self.multipleSelection = [];
+//                const self = this,
+//                    length = self.multipleSelection.length;
+//                let str = '';
+//                self.del_list = self.del_list.concat(self.multipleSelection);
+//                for (let i = 0; i < length; i++) {
+//                    str += self.multipleSelection[i].name + ' ';
+//                }
+//                self.$message.error('删除了'+str);
+//                self.multipleSelection = [];
+                this.dialogVisible = true;
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;

@@ -8,13 +8,13 @@
         </div>
         <div class="handle-box">
             <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">批量删除</el-button>
-            <el-button type="primary" icon="delete" class="handle-del mr10" @click="delAll">添加产品</el-button>
+            <el-button type="primary" icon="delete" class="handle-del mr10" @click="addData">添加产品</el-button>
             <el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr20"></el-input>
             <el-button type="primary" icon="search" @click="search">搜索</el-button>
         </div>
         <el-table :data="tableDataEnd" border style="width: 100%" ref="multipleTable" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="ID" sortable width="120">
+            <el-table-column prop="id" label="ID" sortable width="80">
             </el-table-column>
             <el-table-column prop="name" label="商品名称" width="150">
             </el-table-column>
@@ -26,7 +26,7 @@
             </el-table-column>
             <el-table-column prop="context" label="描述" width="150">
             </el-table-column>
-            <el-table-column prop="url" label="图片地址" width="250">
+            <el-table-column prop="url" label="图片地址" width="180">
             </el-table-column>
             <el-table-column label="操作" width="180">
                 <template scope="scope">
@@ -42,12 +42,23 @@
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 :current-page="currentPage"
-                :page-sizes="[10, 20, 30, 40]"
+                :page-sizes="[2, 20, 30, 40]"
                 :page-size="pageSize"
                 layout="total, sizes, prev, pager, next, jumper"
                 :total="totalItems">
             </el-pagination>
         </div>
+        <el-dialog
+            title="提示"
+            :visible.sync="dialogVisible"
+            width="20%"
+            :before-close="handleClose">
+            <span>确认删除？</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -60,9 +71,10 @@
                 tableDataBegin: [
                 ],
                 tableDataName: "",
+                dialogVisible: false,
                 tableDataEnd: [],
                 currentPage: 1,
-                pageSize: 10,
+                pageSize: 2,
                 totalItems: 0,
                 filterTableDataEnd:[],
                 flag:false
@@ -158,21 +170,26 @@
                     this.$message('编辑第' + (index + 1) + '行');
                 },
                 handleDelete(index, row) {
-                    this.$message.error('删除第' + (index + 1) + '行');
+//                    this.$message.error('删除第' + (index + 1) + '行');
+                    this.dialogVisible = true;
                 },
                 delAll() {
-                    const self = this,
-                        length = self.multipleSelection.length;
-                    let str = '';
-                    self.del_list = self.del_list.concat(self.multipleSelection);
-                    for (let i = 0; i < length; i++) {
-                        str += self.multipleSelection[i].name + ' ';
-                    }
-                    self.$message.error('删除了' + str);
-                    self.multipleSelection = [];
+//                    const self = this,
+//                        length = self.multipleSelection.length;
+//                    let str = '';
+//                    self.del_list = self.del_list.concat(self.multipleSelection);
+//                    for (let i = 0; i < length; i++) {
+//                        str += self.multipleSelection[i].name + ' ';
+//                    }
+//                    self.$message.error('删除了' + str);
+//                    self.multipleSelection = [];
+                    this.dialogVisible = true;
                 },
                 handleSelectionChange(val) {
                     this.multipleSelection = val;
+                },
+                addData(){
+
                 }
             }
         }

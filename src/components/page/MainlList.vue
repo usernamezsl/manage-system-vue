@@ -12,13 +12,13 @@
         </div>
         <el-table :data="tableDataEnd" border style="width: 100%" ref="multipleTable" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="ID" sortable width="200">
+            <el-table-column prop="id" label="ID" sortable width="80">
             </el-table-column>
             <el-table-column prop="content" label="内容" width="450">
             </el-table-column>
             <el-table-column prop="dateString" label="时间" width="200">
             </el-table-column>
-            <el-table-column prop="nickName" label="发信人" width="250">
+            <el-table-column prop="nickName" label="发信人" width="180">
             </el-table-column>
             <el-table-column label="操作" width="150">
                 <template scope="scope">
@@ -160,18 +160,20 @@
                 this.$message('编辑第'+(index+1)+'行');
             },
             handleDelete(index, row) {
-                this.$message.error('删除第'+(index+1)+'行');
+//                this.$message.error('删除第'+(index+1)+'行');
+                this.dialogVisible = true;
             },
             delAll(){
-                const self = this,
-                    length = self.multipleSelection.length;
-                let str = '';
-                self.del_list = self.del_list.concat(self.multipleSelection);
-                for (let i = 0; i < length; i++) {
-                    str += self.multipleSelection[i].name + ' ';
-                }
-                self.$message.error('删除了'+str);
-                self.multipleSelection = [];
+//                const self = this,
+//                    length = self.multipleSelection.length;
+//                let str = '';
+//                self.del_list = self.del_list.concat(self.multipleSelection);
+//                for (let i = 0; i < length; i++) {
+//                    str += self.multipleSelection[i].name + ' ';
+//                }
+//                self.$message.error('删除了'+str);
+//                self.multipleSelection = [];
+                this.dialogVisible = true;
             },
             deleteOne(){
                 this.dialogVisible = true;

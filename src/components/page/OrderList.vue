@@ -13,19 +13,19 @@
         </div>
         <el-table :data="tableDataEnd" border style="width: 100%" ref="multipleTable" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="ID" sortable width="150">
+            <el-table-column prop="id" label="ID" sortable width="80">
             </el-table-column>
-            <el-table-column prop="userId" label="用户号" width="200">
+            <el-table-column prop="userId" label="用户号" width="150">
             </el-table-column>
-            <el-table-column prop="orderNum" label="订单号" width="200">
+            <el-table-column prop="orderNum" label="订单号" width="150">
             </el-table-column>
-            <el-table-column prop="context" label="内容" width="250">
+            <el-table-column prop="context" label="内容" width="200">
             </el-table-column>
             <el-table-column prop="stringTime" label="时间" width="150">
             </el-table-column>
             <el-table-column prop="state" label="处理状态" width="150">
             </el-table-column>
-            <el-table-column label="操作" width="180">
+            <el-table-column label="操作" width="160">
                 <template scope="scope">
                     <el-button size="small" type="danger"
                                @click="handleDelete(scope.$index, scope.row)">删除</el-button>
@@ -43,6 +43,17 @@
                 :total="totalItems">
             </el-pagination>
         </div>
+        <el-dialog
+            title="提示"
+            :visible.sync="dialogVisible"
+            width="20%"
+            :before-close="handleClose">
+            <span>这是一段信息</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+         </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -59,6 +70,7 @@
                 currentPage: 1,
                 pageSize: 10,
                 totalItems: 0,
+                dialogVisible : false,
                 filterTableDataEnd:[],
                 flag:false
             }
@@ -180,18 +192,20 @@
                 this.$message('编辑第'+(index+1)+'行');
             },
             handleDelete(index, row) {
-                this.$message.error('删除第'+(index+1)+'行');
+//                this.$message.error('删除第'+(index+1)+'行');
+                this.dialogVisible = true;
             },
             delAll(){
-                const self = this,
-                    length = self.multipleSelection.length;
-                let str = '';
-                self.del_list = self.del_list.concat(self.multipleSelection);
-                for (let i = 0; i < length; i++) {
-                    str += self.multipleSelection[i].name + ' ';
-                }
-                self.$message.error('删除了'+str);
-                self.multipleSelection = [];
+//                const self = this,
+//                    length = self.multipleSelection.length;
+//                let str = '';
+//                self.del_list = self.del_list.concat(self.multipleSelection);
+//                for (let i = 0; i < length; i++) {
+//                    str += self.multipleSelection[i].name + ' ';
+//                }
+//                self.$message.error('删除了'+str);
+//                self.multipleSelection = [];
+                this.dialogVisible = true;
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;

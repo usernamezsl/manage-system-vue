@@ -41,6 +41,17 @@
                 :total="totalItems">
             </el-pagination>
         </div>
+        <el-dialog
+            title="提示"
+            :visible.sync="dialogVisible"
+            width="10%"
+            :before-close="handleClose">
+            <span>确认要删除吗？</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -55,6 +66,7 @@
                 tableDataName: "",
                 tableDataEnd: [],
                 currentPage: 1,
+                dialogVisible:false,
                 pageSize: 10,
                 totalItems: 0,
                 filterTableDataEnd:[],
@@ -168,18 +180,20 @@
                 this.$message('编辑第'+(index+1)+'行');
             },
             handleDelete(index, row) {
-                this.$message.error('删除第'+(index+1)+'行');
+//                this.$message.error('删除第'+(index+1)+'行');
+                this.dialogVisible = true;
             },
             delAll(){
-                const self = this,
-                    length = self.multipleSelection.length;
-                let str = '';
-                self.del_list = self.del_list.concat(self.multipleSelection);
-                for (let i = 0; i < length; i++) {
-                    str += self.multipleSelection[i].name + ' ';
-                }
-                self.$message.error('删除了'+str);
-                self.multipleSelection = [];
+//                const self = this,
+//                    length = self.multipleSelection.length;
+//                let str = '';
+//                self.del_list = self.del_list.concat(self.multipleSelection);
+//                for (let i = 0; i < length; i++) {
+//                    str += self.multipleSelection[i].name + ' ';
+//                }
+//                self.$message.error('删除了'+str);
+//                self.multipleSelection = [];
+                this.dialogVisible = true;
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;

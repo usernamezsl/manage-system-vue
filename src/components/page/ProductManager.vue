@@ -16,15 +16,15 @@
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="sncode" label="ID" sortable width="120">
             </el-table-column>
-            <el-table-column prop="alias" label="产品名称" width="220">
+            <el-table-column prop="alias" label="产品名称" width="180">
             </el-table-column>
-            <el-table-column prop="des" label="描述" width="250">
+            <el-table-column prop="des" label="描述" width="180">
             </el-table-column>
             <el-table-column prop="state" label="绑定状态" width="100">
             </el-table-column>
             <el-table-column prop="online" label="运行状态" width="100">
             </el-table-column>
-            <el-table-column prop="addtimeString" label="添加时间" width="200">
+            <el-table-column prop="addtimeString" label="添加时间" width="150">
             </el-table-column>
             <el-table-column label="操作" width="220">
                 <template scope="scope">
@@ -90,6 +90,17 @@
                 <el-button type="primary" @click="dialogFormAddVisible = false">提 交</el-button>
             </div>
         </el-dialog>
+        <el-dialog
+            title="提示"
+            :visible.sync="dialogVisible"
+            width="20%"
+            :before-close="handleClose">
+            <span>确认删除？</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+         </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -107,6 +118,7 @@
                 pageSize: 10,
                 dialogFormEditVisible: false,
                 dialogFormAddVisible : false,
+                dialogVisible: false,
                 totalItems: 0,
                 filterTableDataEnd:[],
                 formLabelWidth: '120px',
@@ -221,22 +233,24 @@
                 return row.tag === value;
             },
             handleEdit(index, row) {
-                this.$message('编辑第'+(index+1)+'行');
+//                this.$message('编辑第'+(index+1)+'行');
                 this.dialogFormEditVisible = true;
             },
             handleDelete(index, row) {
-                this.$message.error('删除第'+(index+1)+'行');
+//                this.$message.error('删除第'+(index+1)+'行');
+                this.dialogVisible = true;
             },
             delAll(){
-                const self = this,
-                    length = self.multipleSelection.length;
-                let str = '';
-                self.del_list = self.del_list.concat(self.multipleSelection);
-                for (let i = 0; i < length; i++) {
-                    str += self.multipleSelection[i].name + ' ';
-                }
-                self.$message.error('删除了'+str);
-                self.multipleSelection = [];
+//                const self = this,
+//                    length = self.multipleSelection.length;
+//                let str = '';
+//                self.del_list = self.del_list.concat(self.multipleSelection);
+//                for (let i = 0; i < length; i++) {
+//                    str += self.multipleSelection[i].name + ' ';
+//                }
+//                self.$message.error('删除了'+str);
+//                self.multipleSelection = [];
+                this.dialogVisible = true;
             },
             addData(){
                 this.dialogFormAddVisible = true;

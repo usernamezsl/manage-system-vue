@@ -8,6 +8,20 @@
             <el-button>取消</el-button>
         </el-form-item>
     </el-form>
+    <!--<div>-->
+        <!--<el-dialog-->
+            <!--title="提示"-->
+            <!--:visible.sync="dialogVisible"-->
+            <!--width="10%"-->
+            <!--:before-close="handleClose">-->
+            <!--<span>提交成功</span>-->
+            <!--<span slot="footer" class="dialog-footer">-->
+                <!--<el-button @click="dialogVisible = false">取 消</el-button>-->
+                <!--<el-button type="primary" @click="dialogVisible = false">确 定</el-button>-->
+            <!--</span>-->
+        <!--</el-dialog>-->
+    <!--</div>-->
+
 </template>
 
 <script>
@@ -18,7 +32,8 @@
             return {
                 form: {
                     content: '填写发送通知内容~'
-                }
+                },
+//                dialogVisible:false
             }
         },
         created: function () {
@@ -27,6 +42,7 @@
         methods: {
             onSubmit() {
                 console.log('submit!');
+//                this.dialogVisible = true;
             }
         }
     }
