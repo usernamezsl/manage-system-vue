@@ -158,7 +158,7 @@
                 //当前页数据起始索引
                 var from = pageSize * (currentPage - 1);
                 //当前页数据遍历数目
-                var to = pageSize * currentPage - 1;
+                var to = pageSize * currentPage;
                 //清空当前数据
                 tableDataEnd.splice(0,tableDataEnd.length)
                 for (var from;from<to;from++){
