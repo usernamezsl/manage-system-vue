@@ -171,13 +171,22 @@
                 }
             }, //组件自带监控当前页码
             currentChangePage(list) {
-                let from = (this.currentPage - 1) * this.pageSize;
-                let to = this.currentPage * this.pageSize;
-                this.tableDataEnd = [];
-                for (; from < to; from++) {
-                    if (list[from]) {
-                        this.tableDataEnd.push(list[from]);
-                    }
+                //当前页码
+                var currentPage = this.currentPage;
+                //每页数量
+                var pageSize = this.pageSize;
+                //数据总量
+                var tableDataBegin = this.tableDataBegin;
+                //最终渲染当前页的数据
+                var tableDataEnd = this.tableDataEnd;
+                //当前页数据起始索引
+                var from = pageSize * (currentPage - 1);
+                //当前页数据遍历数目
+                var to = pageSize * currentPage - 1;
+                //清空当前数据
+                tableDataEnd.splice(0,tableDataEnd.length)
+                for (var from;from<to;from++){
+                    tableDataEnd.push(tableDataBegin[from])
                 }
             },
             search(){
