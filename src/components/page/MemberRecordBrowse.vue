@@ -47,7 +47,7 @@
             <span>确认要删除吗？</span>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                <el-button type="primary" @click="handleDeleteForm">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -56,6 +56,7 @@
 <script>
 
     import axios from 'axios';
+    import Qs from 'qs'
     export default {
         data() {
             return {
@@ -68,7 +69,10 @@
                 pageSize: 10,
                 totalItems: 0,
                 filterTableDataEnd:[],
-                flag:false
+                flag:false,
+                dialogDeleteForm:{
+                    id:''
+                }
             }
         },
         created: function () {
@@ -175,7 +179,31 @@
             },
             handleDelete(index, row) {
 //                this.$message.error('删除第'+(index+1)+'行');
+                this.dialogDeleteForm.id = this.tableDataEnd[index].id;
                 this.dialogVisible = true;
+            },
+            handleDeleteForm(){
+                var form_data= Qs.stringify(this.dialogDeleteForm);
+                this.$axios({
+                    method:'post',
+                    url:'http://localhost:8080/deleteUserRecordVue',
+                    responseType:'json',
+                    data:form_data,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(function(response) {
+                    var jsonObject = response.data;
+                    var  resultData = jsonObject.data;
+                    if (jsonObject.code == 0){
+                        console.log(jsonObject.msg);
+                    }
+                })
+                .catch(function (error) {
+                    console.log("发生错误了");
+                    this.dialogFormEditVisible = false;
+                });
+                this.dialogVisible = false;
             },
             delAll(){
 //                const self = this,

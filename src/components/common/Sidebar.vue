@@ -72,7 +72,7 @@
                             },
                             {
                                 index: 'memberList',
-                                title: '会员信息'
+                                title: '会员列表'
                             },
                             {
                                 index: 'memberRecordBrowse',

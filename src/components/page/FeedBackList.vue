@@ -92,44 +92,7 @@
             }
         },
         created: function () {
-            var tableData = [];
-            let _this = this;
-            this.$axios.get('http://localhost:8080/getProblemsVue')
-                .then(function (response) {
-                    var jsonObject = response.data;
-                    var  resultData = jsonObject.data;
-                    for (var i = 0;i < resultData.length;i++){
-                        var  obj = {};
-                        obj.id = resultData[i].id;
-                        if (resultData[i].id == 1){
-                            obj.nickName = '15695983201';
-                        }else if (resultData[i].id == 3){
-                            obj.nickName = '15695983201';
-                        }else {
-                            obj.nickName = '15695983201';
-                        }
-                        obj.content = resultData[i].content;
-                        if (resultData[i].state == '0'){
-                            obj.state = '未处理';
-                        }else {
-                            obj.state = '已处理';
-                        }
-                        obj.timeString = resultData[i].timeString;
-                        tableData.push(obj);
-                    }
-                    _this.tableDataBegin = tableData;
-                    _this.totalItems = _this.tableDataBegin.length;
-                    if (_this.totalItems > _this.pageSize) {
-                        for (let index = 0; index < _this.pageSize; index++) {
-                            _this.tableDataEnd.push(_this.tableDataBegin[index]);
-                        }
-                    } else {
-                        _this.tableDataEnd = _this.tableDataBegin;
-                    }
-                }).catch(function (error) {
-                console.log(error);
-            });
-
+            this.queryInfo();
         },
         methods: {
             //前端搜索功能需要区分是否检索,因为对应的字段的索引不同
@@ -208,7 +171,6 @@
             },
             solveSubmit(){
                 var form_data= Qs.stringify(this.dialogEditForm);
-                this.dialogFormEditVisible = false;
                 this.$axios({
                     method:'post',
                     url:'http://localhost:8080/solveSubmitVue',
@@ -222,14 +184,40 @@
                     var  resultData = jsonObject.data;
                     debugger;
                     if (jsonObject.code == 0){
-
+//                        var allData = this.tableDataEnd;
+//                        var currentData = this.dialogEditForm;
+//                        for (var i=0;i<allData.length;i++){
+//                            if (allData[i].cid == currentData.cid){
+//                                allData[i].state = '已处理';
+//                            }
+//                        }
                     }
                 })
-                    .catch(function (error) {
-                        console.log("发生错误了");
-                        this.dialogFormEditVisible = false;
-                    });
-
+                .catch(function (error) {
+                    console.log("发生错误了");
+                });
+                this.dialogFormEditVisible = false;
+            },
+            handleDelete(index, row) {
+//                this.$message.error('删除第'+(index+1)+'行');
+                this.dialogVisible = true;
+            },
+            delAll(){
+//                const self = this,
+//                    length = self.multipleSelection.length;
+//                let str = '';
+//                self.del_list = self.del_list.concat(self.multipleSelection);
+//                for (let i = 0; i < length; i++) {
+//                    str += self.multipleSelection[i].name + ' ';
+//                }
+//                self.$message.error('删除了'+str);
+//                self.multipleSelection = [];
+                this.dialogVisible = true;
+            },
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+            },
+            queryInfo(){
                 var tableData = [];
                 let _this = this;
                 this.$axios.get('http://localhost:8080/getProblemsVue')
@@ -255,6 +243,7 @@
                             obj.timeString = resultData[i].timeString;
                             tableData.push(obj);
                         }
+                        debugger;
                         _this.tableDataBegin = tableData;
                         _this.totalItems = _this.tableDataBegin.length;
                         if (_this.totalItems > _this.pageSize) {
@@ -268,24 +257,8 @@
                     console.log(error);
                 });
             },
-            handleDelete(index, row) {
-//                this.$message.error('删除第'+(index+1)+'行');
-                this.dialogVisible = true;
-            },
-            delAll(){
-//                const self = this,
-//                    length = self.multipleSelection.length;
-//                let str = '';
-//                self.del_list = self.del_list.concat(self.multipleSelection);
-//                for (let i = 0; i < length; i++) {
-//                    str += self.multipleSelection[i].name + ' ';
-//                }
-//                self.$message.error('删除了'+str);
-//                self.multipleSelection = [];
-                this.dialogVisible = true;
-            },
-            handleSelectionChange(val) {
-                this.multipleSelection = val;
+            handleClose(){
+
             }
         }
     }

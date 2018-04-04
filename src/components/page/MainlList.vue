@@ -46,7 +46,7 @@
             <span>确认要删除吗？</span>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                <el-button type="primary" @click="handleDeleteForm">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -68,43 +68,14 @@
                 totalItems: 0,
                 filterTableDataEnd:[],
                 dialogVisible: false,
-                flag:false
+                flag:false,
+                dialogDeleteForm:{
+                    id:''
+                }
             }
         },
         created: function () {
-            var data = [];
-            let _this = this;
-//            Vue.prototype.$axios = axios;
-            this.$axios.get('http://localhost:8080/getUserMsgVue')
-                .then(function (response) {
-                    var jsonObject = response.data;
-                    var  resultData = jsonObject.data;
-                    for (var i=0;i<resultData.length;i++){
-                        var obj = {};
-                        obj.content = resultData[i].content;
-                        obj.dateString = resultData[i].dateString;
-                        obj.id = resultData[i].id;
-//                        if (resultData[i].user != null &&
-//                            typeof(resultData[i].user )!= undefined){
-//                            obj.nickName = resultData[i].user.phone;
-//                        }else {
-//                            obj.nickName = '15505903237';
-//                        }
-                        obj.nickName = '15695983201';
-                        data[i] = obj;
-                    }
-                    _this.tableDataBegin = data;
-                    _this.totalItems = _this.tableDataBegin.length;
-                    if (_this.totalItems > _this.pageSize) {
-                        for (let index = 0; index < _this.pageSize; index++) {
-                            _this.tableDataEnd.push(_this.tableDataBegin[index]);
-                        }
-                    } else {
-                        _this.tableDataEnd = _this.tableDataBegin;
-                    }
-                }).catch(function (error) {
-                console.log(error);
-            });
+           this.queryInfo();
         },
         methods: {
             //前端搜索功能需要区分是否检索,因为对应的字段的索引不同
@@ -178,6 +149,33 @@
             handleDelete(index, row) {
 //                this.$message.error('删除第'+(index+1)+'行');
                 this.dialogVisible = true;
+                this.dialogDeleteForm.id = this.tableDataEnd[index].id;
+            },
+            handleDeleteForm(){
+                this.dialogVisible = false;
+                var form_data= Qs.stringify(this.dialogDeleteForm);
+                this.$axios({
+                    method:'post',
+                    url:'http://localhost:8080/deleteUserMsgVue',
+                    responseType:'json',
+                    data:form_data,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(function(response) {
+//                    var jsonObject = response.data;
+//                    var  resultData = jsonObject.data;
+//                    if (jsonObject.code == 0){
+//                        console.log(jsonObject.msg);
+//                    }
+//                    this.tableDataEnd.splice(0,this.tableDataEnd.length)
+//                    this.queryInfo();
+                })
+                    .catch(function (error) {
+                        console.log("发生错误了");
+                        this.dialogFormEditVisible = false;
+                    });
+                this.queryInfo();
             },
             delAll(){
 //                const self = this,
@@ -196,6 +194,41 @@
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
+            },
+            queryInfo(){
+            var data = [];
+            let _this = this;
+//            Vue.prototype.$axios = axios;
+                this.$axios.get('http://localhost:8080/getUserMsgVue')
+                    .then(function (response) {
+                        var jsonObject = response.data;
+                        var  resultData = jsonObject.data;
+                        for (var i=0;i<resultData.length;i++){
+                            var obj = {};
+                            obj.content = resultData[i].content;
+                            obj.dateString = resultData[i].dateString;
+                            obj.id = resultData[i].id;
+//                        if (resultData[i].user != null &&
+//                            typeof(resultData[i].user )!= undefined){
+//                            obj.nickName = resultData[i].user.phone;
+//                        }else {
+//                            obj.nickName = '15505903237';
+//                        }
+                            obj.nickName = '15695983201';
+                            data[i] = obj;
+                        }
+                        _this.tableDataBegin = data;
+                        _this.totalItems = _this.tableDataBegin.length;
+                        if (_this.totalItems > _this.pageSize) {
+                            for (let index = 0; index < _this.pageSize; index++) {
+                                _this.tableDataEnd.push(_this.tableDataBegin[index]);
+                            }
+                        } else {
+                            _this.tableDataEnd = _this.tableDataBegin;
+                        }
+                    }).catch(function (error) {
+                    console.log(error);
+                });
             }
         }
     }

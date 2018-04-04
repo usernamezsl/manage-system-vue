@@ -61,7 +61,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormEditVisible = false">重 置</el-button>
-                <el-button type="primary" @click="dialogFormEditVisible = false">提 交</el-button>
+                <el-button type="primary" @click="handleEditForm">提 交</el-button>
             </div>
         </el-dialog>
         <el-dialog
@@ -72,7 +72,7 @@
             <span>确认要删除吗？</span>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                <el-button type="primary" @click="handleDeleteForm">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -81,6 +81,7 @@
 <script>
 
     import axios from 'axios';
+    import Qs from 'qs'
     export default {
         data() {
             return {
@@ -99,42 +100,15 @@
                     pass: '',
                     pass2: ''
                 },
+                dialogDeleteForm:{
+                    id:''
+                },
                 dialogFormEditVisible :false,
                 dialogVisible:false
             }
         },
         created: function () {
-            var data = [];
-            let _this = this;
-//            Vue.prototype.$axios = axios;
-            this.$axios.get('http://localhost:8080/getAllCommonUserVue')
-                .then(function (response) {
-                    var jsonObject = response.data;
-                    var  resultData = jsonObject.data;
-                    debugger;
-                    for (var i=0; i<resultData.length; i++){
-                        var obj = {};
-                        obj.username = resultData[i].username;
-                        obj.phone = resultData[i].phone;
-                        obj.id = resultData[i].id;
-                        obj.lastip = resultData[i].lastip;
-                        obj.email = resultData[i].email;
-                        obj.address = resultData[i].address;
-                        obj.regdateString = resultData[i].regdateString;
-                        data[i] = obj;
-                    }
-                    _this.tableDataBegin = data;
-                    _this.totalItems = _this.tableDataBegin.length;
-                    if (_this.totalItems > _this.pageSize) {
-                        for (let index = 0; index < _this.pageSize; index++) {
-                            _this.tableDataEnd.push(_this.tableDataBegin[index]);
-                        }
-                    } else {
-                        _this.tableDataEnd = _this.tableDataBegin;
-                    }
-                }).catch(function (error) {
-                console.log(error);
-            });
+            this.queryInfo();
         },
         methods: {
             //前端搜索功能需要区分是否检索,因为对应的字段的索引不同
@@ -210,11 +184,59 @@
             },
             handleEdit(index, row) {
 //                this.$message('编辑第'+(index+1)+'行');
+                this.dialogEditForm.user = this.tableDataEnd[index].username;
                 this.dialogFormEditVisible = true;
             },
             handleDelete(index, row) {
 //                this.$message.error('删除第'+(index+1)+'行');
+                this.dialogDeleteForm.id = this.tableDataEnd[index].id;
                 this.dialogVisible = true;
+            },
+            handleDeleteForm(){
+                var form_data= Qs.stringify(this.dialogDeleteForm);
+                this.$axios({
+                    method:'post',
+                    url:'http://localhost:8080/deleteCommonUserVue',
+                    responseType:'json',
+                    data:form_data,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(function(response) {
+                    var jsonObject = response.data;
+                    var  resultData = jsonObject.data;
+                    if (jsonObject.code == 0){
+                        console.log(jsonObject.msg);
+                    }
+                })
+                    .catch(function (error) {
+                        console.log("发生错误了");
+                        this.dialogFormEditVisible = false;
+                    });
+                this.dialogVisible = false;
+            },
+            handleEditForm(){
+                var form_data= Qs.stringify(this.dialogEditForm);
+                this.$axios({
+                    method:'post',
+                    url:'http://localhost:8080/changePass2Vue',
+                    responseType:'json',
+                    data:form_data,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(function(response) {
+                    var jsonObject = response.data;
+                    var  resultData = jsonObject.data;
+                    if (jsonObject.code == 0){
+                        console.log(jsonObject.msg);
+                    }
+                })
+                .catch(function (error) {
+                    console.log("发生错误了");
+                    this.dialogFormEditVisible = false;
+                });
+                this.dialogFormEditVisible = true;
             },
             delAll(){
 //                const self = this,
@@ -230,6 +252,39 @@
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
+            },
+            queryInfo(){
+                var data = [];
+                let _this = this;
+//            Vue.prototype.$axios = axios;
+                this.$axios.get('http://localhost:8080/getAllCommonUserVue')
+                    .then(function (response) {
+                        var jsonObject = response.data;
+                        var  resultData = jsonObject.data;
+                        debugger;
+                        for (var i=0; i<resultData.length; i++){
+                            var obj = {};
+                            obj.username = resultData[i].username;
+                            obj.phone = resultData[i].phone;
+                            obj.id = resultData[i].id;
+                            obj.lastip = resultData[i].lastip;
+                            obj.email = resultData[i].email;
+                            obj.address = resultData[i].address;
+                            obj.regdateString = resultData[i].regdateString;
+                            data[i] = obj;
+                        }
+                        _this.tableDataBegin = data;
+                        _this.totalItems = _this.tableDataBegin.length;
+                        if (_this.totalItems > _this.pageSize) {
+                            for (let index = 0; index < _this.pageSize; index++) {
+                                _this.tableDataEnd.push(_this.tableDataBegin[index]);
+                            }
+                        } else {
+                            _this.tableDataEnd = _this.tableDataBegin;
+                        }
+                    }).catch(function (error) {
+                    console.log(error);
+                });
             }
         }
     }
