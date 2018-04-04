@@ -196,7 +196,7 @@
                 var form_data= Qs.stringify(this.dialogDeleteForm);
                 this.$axios({
                     method:'post',
-                    url:'http://localhost:8080/deleteCommonUserVue',
+                    url:'http://localhost:8080/deleteDataRecordVue',
                     responseType:'json',
                     data:form_data,
                     headers: {

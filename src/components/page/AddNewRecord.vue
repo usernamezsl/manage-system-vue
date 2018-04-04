@@ -27,6 +27,7 @@
 <script>
 
     import axios from 'axios';
+    import Qs from 'qs'
     export default {
         data() {
             return {
@@ -41,8 +42,27 @@
         },
         methods: {
             onSubmit() {
-                console.log('submit!');
-//                this.dialogVisible = true;
+                var form_data= Qs.stringify(this.form);
+                this.$axios({
+                    method:'post',
+                    url:'http://localhost:8080/sendMsgVue',
+                    responseType:'json',
+                    data:form_data,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(function(response) {
+                    var jsonObject = response.data;
+                    var  resultData = jsonObject.data;
+                    if (jsonObject.code == 0){
+                        console.log(jsonObject.msg);
+                        alert("发送成功！")
+                    }
+                })
+                    .catch(function (error) {
+                        console.log("发生错误了");
+                        this.dialogFormEditVisible = false;
+                    });
             }
         }
     }

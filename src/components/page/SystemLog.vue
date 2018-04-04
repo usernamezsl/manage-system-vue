@@ -60,6 +60,7 @@
 <script>
 
     import axios from 'axios';
+    import Qs from 'qs'
     export default {
         data() {
             return {
@@ -76,63 +77,7 @@
             }
         },
         created: function () {
-            var data = [];
-            let _this = this;
-            this.$axios.get('http://localhost:8080/getDataRecordVue')
-                .then(function (response) {
-                    var jsonObject = response.data;
-                    var  resultData = jsonObject.data;
-                    for (var i= 0;i<resultData.length;i++){
-                        var obj = {};
-                        if (resultData[i].hasOwnProperty("id")){
-                            obj.id = resultData[i].id;
-                        }else {
-                            obj.id = 999;
-                        }
-                        if (resultData[i].hasOwnProperty("timeString")){
-                            obj.timeString = resultData[i].timeString;
-                        }else {
-                            obj.timeString = '2017-11-30 10:30:57';
-                        }
-                        if (resultData[i].hasOwnProperty("type")){
-                            obj.type = resultData[i].type;
-                        }else {
-                            obj.type = 'A1';
-                        }
-                        if (resultData[i].hasOwnProperty("content")){
-                            obj.content = resultData[i].content;
-                        }else {
-                            obj.content = '15080579822用户登录';
-                        }
-                        if (resultData[i].hasOwnProperty("user")){
-                            if (resultData[i].user.hasOwnProperty("nickName")){
-                                obj.nickName = resultData[i].user.nickName;
-                            }
-                        }else {
-                            obj.nickName = '15080579822';
-                        }
-                        if (resultData[i].hasOwnProperty("user")){
-                            if (resultData[i].user.hasOwnProperty("lastip")){
-                                obj.ip = resultData[i].user.lastip;
-                            }
-                        }else {
-                            obj.ip = '127.0.0.1';
-                        }
-                        data.push(obj);
-                    }
-                    _this.tableDataBegin = data;
-                    _this.totalItems = _this.tableDataBegin.length;
-                    if (_this.totalItems > _this.pageSize) {
-                        for (let index = 0; index < _this.pageSize; index++) {
-                            _this.tableDataEnd.push(_this.tableDataBegin[index]);
-                        }
-                    } else {
-                        _this.tableDataEnd = _this.tableDataBegin;
-                    }
-                }).catch(function (error) {
-                console.log(error);
-            });
-
+            this.queryInfo();
         },
         methods: {
             //前端搜索功能需要区分是否检索,因为对应的字段的索引不同
@@ -225,6 +170,64 @@
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
+            },
+            queryInfo(){
+                var data = [];
+                let _this = this;
+                this.$axios.get('http://localhost:8080/getDataRecordVue')
+                    .then(function (response) {
+                        var jsonObject = response.data;
+                        var  resultData = jsonObject.data;
+                        for (var i= 0;i<resultData.length;i++){
+                            var obj = {};
+                            if (resultData[i].hasOwnProperty("id")){
+                                obj.id = resultData[i].id;
+                            }else {
+                                obj.id = 999;
+                            }
+                            if (resultData[i].hasOwnProperty("timeString")){
+                                obj.timeString = resultData[i].timeString;
+                            }else {
+                                obj.timeString = '2017-11-30 10:30:57';
+                            }
+                            if (resultData[i].hasOwnProperty("type")){
+                                obj.type = resultData[i].type;
+                            }else {
+                                obj.type = 'A1';
+                            }
+                            if (resultData[i].hasOwnProperty("content")){
+                                obj.content = resultData[i].content;
+                            }else {
+                                obj.content = '15080579822用户登录';
+                            }
+                            if (resultData[i].hasOwnProperty("user")){
+                                if (resultData[i].user.hasOwnProperty("nickName")){
+                                    obj.nickName = resultData[i].user.nickName;
+                                }
+                            }else {
+                                obj.nickName = 'admin';
+                            }
+                            if (resultData[i].hasOwnProperty("user")){
+                                if (resultData[i].user.hasOwnProperty("lastip")){
+                                    obj.ip = resultData[i].user.lastip;
+                                }
+                            }else {
+                                obj.ip = '127.0.0.1';
+                            }
+                            data.push(obj);
+                        }
+                        _this.tableDataBegin = data;
+                        _this.totalItems = _this.tableDataBegin.length;
+                        if (_this.totalItems > _this.pageSize) {
+                            for (let index = 0; index < _this.pageSize; index++) {
+                                _this.tableDataEnd.push(_this.tableDataBegin[index]);
+                            }
+                        } else {
+                            _this.tableDataEnd = _this.tableDataBegin;
+                        }
+                    }).catch(function (error) {
+                    console.log(error);
+                });
             }
         }
     }

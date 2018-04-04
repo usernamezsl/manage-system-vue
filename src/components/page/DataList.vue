@@ -49,15 +49,29 @@
             <span>确认要删除吗？</span>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                <el-button type="primary" @click="handleDeleteForm">确 定</el-button>
             </span>
         </el-dialog>
+
+        <el-dialog
+            title="提示"
+            :visible.sync="dialogOperatorVisible"
+            width="30%"
+            :before-close="handleClose">
+            <span>操作成功</span>
+            <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogOperatorVisible = false">取 消</el-button>
+    <el-button type="primary" @click="dialogOperatorVisible = false">确 定</el-button>
+  </span>
+        </el-dialog>
+
     </div>
 </template>
 
 <script>
 
     import axios from 'axios';
+    import Qs from 'qs'
     export default {
         data() {
             return {
@@ -70,7 +84,11 @@
                 pageSize: 10,
                 totalItems: 0,
                 filterTableDataEnd:[],
-                flag:false
+                flag:false,
+                dialogDeleteForm:{
+                    id:''
+                },
+                dialogOperatorVisible:false
             }
         },
         created: function () {
@@ -190,7 +208,31 @@
             },
             handleDelete(index, row) {
 //                this.$message.error('删除第'+(index+1)+'行');
+                this.dialogDeleteForm.id = this.tableDataEnd[index].id;
                 this.dialogVisible = true;
+            },
+            handleDeleteForm(){
+                var form_data= Qs.stringify(this.dialogDeleteForm);
+                this.$axios({
+                    method:'post',
+                    url:'http://localhost:8080/deleteDataRecordVue',
+                    responseType:'json',
+                    data:form_data,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(function(response) {
+                    var jsonObject = response.data;
+                    var  resultData = jsonObject.data;
+                    if (jsonObject.code == 0){
+                        console.log(jsonObject.msg);
+                        alert("操作成功");
+                    }
+                })
+                .catch(function (error) {
+                    console.log("发生错误了");
+                });
+                this.dialogVisible = false;
             },
             delAll(){
 //                const self = this,
