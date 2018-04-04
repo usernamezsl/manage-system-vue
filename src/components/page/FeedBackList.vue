@@ -49,7 +49,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormEditVisible = false">重 置</el-button>
-                <el-button type="primary" @click="dialogFormEditVisible = false">提 交</el-button>
+                <el-button type="primary" @click="solveSubmit">提 交</el-button>
             </div>
         </el-dialog>
         <el-dialog
@@ -69,6 +69,7 @@
 <script>
 
     import axios from 'axios';
+    import Qs from 'qs'
     export default {
         data() {
             return {
@@ -85,9 +86,9 @@
                 formLabelWidth: '120px',
                 dialogFormEditVisible : false,
                 dialogEditForm: {
+                    cid:'',
                     backtext: '好的,已收到！'
-                },
-
+                }
             }
         },
         created: function () {
@@ -194,6 +195,69 @@
             handleEdit(index, row) {
 //                this.$message('编辑第'+(index+1)+'行');
                 this.dialogFormEditVisible = true;
+                this.dialogEditForm.cid = this.tableDataEnd[index].id;
+            },
+            solveSubmit(){
+                var form_data= Qs.stringify(this.dialogEditForm);
+                this.dialogFormEditVisible = false;
+                this.$axios({
+                    method:'post',
+                    url:'http://localhost:8080/solveSubmitVue',
+                    responseType:'json',
+                    data:form_data,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(function(response) {
+                    var jsonObject = response.data;
+                    var  resultData = jsonObject.data;
+                    debugger;
+                    if (jsonObject.code == 0){
+
+                    }
+                })
+                    .catch(function (error) {
+                        console.log("发生错误了");
+                        this.dialogFormEditVisible = false;
+                    });
+
+                var tableData = [];
+                let _this = this;
+                this.$axios.get('http://localhost:8080/getProblemsVue')
+                    .then(function (response) {
+                        var jsonObject = response.data;
+                        var  resultData = jsonObject.data;
+                        for (var i = 0;i < resultData.length;i++){
+                            var  obj = {};
+                            obj.id = resultData[i].id;
+                            if (resultData[i].id == 1){
+                                obj.nickName = '15695983201';
+                            }else if (resultData[i].id == 3){
+                                obj.nickName = '15695983201';
+                            }else {
+                                obj.nickName = '15695983201';
+                            }
+                            obj.content = resultData[i].content;
+                            if (resultData[i].state == '0'){
+                                obj.state = '未处理';
+                            }else {
+                                obj.state = '已处理';
+                            }
+                            obj.timeString = resultData[i].timeString;
+                            tableData.push(obj);
+                        }
+                        _this.tableDataBegin = tableData;
+                        _this.totalItems = _this.tableDataBegin.length;
+                        if (_this.totalItems > _this.pageSize) {
+                            for (let index = 0; index < _this.pageSize; index++) {
+                                _this.tableDataEnd.push(_this.tableDataBegin[index]);
+                            }
+                        } else {
+                            _this.tableDataEnd = _this.tableDataBegin;
+                        }
+                    }).catch(function (error) {
+                    console.log(error);
+                });
             },
             handleDelete(index, row) {
 //                this.$message.error('删除第'+(index+1)+'行');

@@ -55,6 +55,7 @@
 <script>
 
     import axios from 'axios';
+    import Qs from 'qs'
     export default {
         data() {
             return {
@@ -83,7 +84,13 @@
                         obj.content = resultData[i].content;
                         obj.dateString = resultData[i].dateString;
                         obj.id = resultData[i].id;
-//                        obj.nickName = resultData[i].user.nickName;
+//                        if (resultData[i].user != null &&
+//                            typeof(resultData[i].user )!= undefined){
+//                            obj.nickName = resultData[i].user.phone;
+//                        }else {
+//                            obj.nickName = '15505903237';
+//                        }
+                        obj.nickName = '15695983201';
                         data[i] = obj;
                     }
                     _this.tableDataBegin = data;

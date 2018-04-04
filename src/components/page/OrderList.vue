@@ -51,7 +51,7 @@
             <span>确认删除？</span>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                <el-button type="primary" @click="handleDeleteForm">确 定</el-button>
          </span>
         </el-dialog>
     </div>
@@ -72,7 +72,10 @@
                 totalItems: 0,
                 dialogVisible : false,
                 filterTableDataEnd:[],
-                flag:false
+                flag:false,
+                dialogDeleteForm:{
+                    id: ''
+                },
             }
         },
         created: function () {
@@ -83,16 +86,14 @@
                 .then(function (response) {
                     if (response.data != null && response.data != ''){
                         for (let i = 0; i < response.data.length; i++) {
-                            console.log(response.data);
-                            console.log(response.data[i].user);
                             var obj = {};
                             if (response.data[i].id != '' && response.data[i].id != null && typeof(response.data[i].id) != undefined){
                                 obj.id = response.data[i].id;
                             }
-//                            if (response.data[i].user.id != '' && response.data[i].user.id != null &&
-//                                typeof(response.data[i].user.id) != undefined){
-//                                obj.userId = response.data[i].user.id;
-//                            }
+                            if (response.data[i].user != '' && response.data[i].user != null &&
+                                typeof(response.data[i].user) != undefined){
+                                obj.userId = response.data[i].user.id;
+                            }
                             if (response.data[i].orderNum != '' && response.data[i].orderNum != null
                                 && typeof(response.data[i].orderNum) != undefined){
                                 obj.orderNum = response.data[i].orderNum;
@@ -105,9 +106,9 @@
                                 typeof(response.data[i].stringTime )!= undefined){
                                 obj.stringTime = response.data[i].stringTime;
                             }
-                            if (response.data[i].state != '' && response.data[i].state != null &&
-                                typeof(response.data[i].state )!= undefined){
-                                obj.state = response.data[i].state;
+                            if (response.data[i] != '' && response.data[i] != null &&
+                                typeof(response.data[i] )!= undefined){
+                                    obj.state = response.data[i].state;
                             }
                             data[i] = obj;
                         }
@@ -193,7 +194,18 @@
             },
             handleDelete(index, row) {
 //                this.$message.error('删除第'+(index+1)+'行');
+                var data = this.tableDataEnd[index];
+                this.dialogDeleteForm.id = data.id;
                 this.dialogVisible = true;
+
+            },
+            handleDeleteForm(){
+                var data = this.dialogDeleteForm
+                var index = this.tableDataEnd.indexOf(data);
+                if (index > -1) {
+                    this.tableDataEnd.splice(index,1);
+                }
+                this.dialogVisible = false;
             },
             delAll(){
 //                const self = this,

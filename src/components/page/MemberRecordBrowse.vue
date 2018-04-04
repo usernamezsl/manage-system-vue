@@ -76,7 +76,6 @@
             let _this = this;
             this.$axios.get('http://localhost:8080/getUserRecordVue')
                 .then(function (response) {
-                    debugger;
                     var jsonObject = response.data;
                     var  resultData = jsonObject.data;
                     _this.tableDataBegin = resultData;
